@@ -1,231 +1,235 @@
 import os
-from flask import Flask, jsonify, request, render_template, session
-from flask_sqlalchemy import SQLAlchemy
-from flask_bcrypt import Bcrypt
-from flask_login import LoginManager, UserMixin, login_user, logout_user, current_user, login_required
-
-# --- Import Extensions ---
-# Import from the extensions.py file
+import json
+import random
+from flask import Flask, request, jsonify, render_template, session
+from flask_login import LoginManager, login_user, logout_user, login_required, current_user
+from flask_cors import CORS
 from extensions import db, bcrypt, login_manager
 
-# --- App Setup ---
-app = Flask(__name__)
-# Configure secret key and database URI
-app.config['SECRET_KEY'] = 'a_very_secret_key_that_should_be_changed'
-basedir = os.path.abspath(os.path.dirname(__file__))
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'instance', 'farm.db')
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
-# --- Init Apps ---
-# Connect the app to the extensions
-db.init_app(app)
-bcrypt.init_app(app)
-login_manager.init_app(app)
-
-login_manager.login_view = 'api_unauthorized' # Will send a 401 response
-
-# --- CRITICAL FIX ---
-# Import the models *after* db.init_app(app) has been called.
-# This ensures that db.Model has the correct app context when models.py is loaded.
-from models import User, SlimmyZone
-
-# --- User Loader for Flask-Login ---
-@login_manager.user_loader
-def load_user(user_id):
-    # No import needed, User is already imported
-    return User.query.get(int(user_id))
-
-# --- Helper to create default map data for a new user ---
-def create_default_map_data(user_id):
-    # No import needed
-    zones = []
-    zone_lengths = {'tomatoes': 5, 'onions': 6, 'mint': 4}
-    for plant_type, length in zone_lengths.items():
-        for i in range(length):
-            zone = SlimmyZone(
-                owner_id=user_id,
-                plant_type=plant_type,
-                zone_index=i,
-                soil_needs_water=bool(i % 2), # Default pattern
-                pump_is_on=False
-            )
-            zones.append(zone)
-    db.session.bulk_save_objects(zones)
-    db.session.commit()
-
-# --- Main Route (Serves the React App) ---
-@app.route('/')
-def index():
-    # This route serves the single-page application shell
-    return render_template('index.html')
-
-# --- API Routes ---
-
-# [AUTH API]
-@app.route('/api/signup', methods=['POST'])
-def api_signup():
-    # No import needed
-    data = request.json
-    username = data.get('username')
-    cin = data.get('cin')
-    password = data.get('password')
-
-    if not all([username, cin, password]):
-        return jsonify({"error": "Missing data"}), 400
+# --- App Factory Function ---
+def create_app():
+    """Creates and configures the Flask application."""
     
-    if len(cin) != 8:
-        return jsonify({"error": "CIN must be 8 digits"}), 400
-
-    if User.query.filter_by(cin=cin).first():
-        return jsonify({"error": "CIN already registered"}), 400
-
-    hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
-    new_user = User(username=username, cin=cin, password_hash=hashed_password)
-    db.session.add(new_user)
-    db.session.commit()
-
-    # Create default map data for the new user
-    create_default_map_data(new_user.id)
-
-    login_user(new_user, remember=True)
-    return jsonify({
-        "id": new_user.id,
-        "username": new_user.username,
-        "cin": new_user.cin
-    }), 201
-
-@app.route('/api/login', methods=['POST'])
-def api_login():
-    # No import needed
-    data = request.json
-    cin = data.get('cin')
-    password = data.get('password')
-
-    user = User.query.filter_by(cin=cin).first()
-
-    if user and bcrypt.check_password_hash(user.password_hash, password):
-        login_user(user, remember=True)
-        return jsonify({
-            "id": user.id,
-            "username": user.username,
-            "cin": user.cin
-        }), 200
+    app = Flask(__name__, template_folder='templates', static_folder='static')
     
-    return jsonify({"error": "Invalid CIN or password"}), 401
-
-@app.route('/api/logout', methods=['POST'])
-@login_required
-def api_logout():
-    logout_user()
-    return jsonify({"message": "Logged out successfully"}), 200
-
-@app.route('/api/session', methods=['GET'])
-def api_session():
-    if current_user.is_authenticated:
-        return jsonify({
-            "id": current_user.id,
-            "username": current_user.username,
-            "cin": current_user.cin
-        }), 200
-    return jsonify({"error": "No active session"}), 401
-
-@login_manager.unauthorized_handler
-def api_unauthorized():
-    # This function is called when a user tries to access an @login_required route
-    # without being logged in.
-    return jsonify({"error": "Not authorized"}), 401
-
-# [DATA API]
-@app.route('/api/map_data', methods=['GET'])
-@login_required
-def api_map_data():
-    # No import needed
-    zones = SlimmyZone.query.filter_by(owner_id=current_user.id).all()
+    # --- Configuration ---
+    # Set a secret key for session management
+    app.config['SECRET_KEY'] = 'a_very_secret_key_that_should_be_changed'
     
-    # Check if user has data, if not, create it
-    if not zones:
-        create_default_map_data(current_user.id)
-        zones = SlimmyZone.query.filter_by(owner_id=current_user.id).all()
+    # Configure the SQLite database
+    # It will be created in the 'instance' folder
+    basedir = os.path.abspath(os.path.dirname(__file__))
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'instance', 'smart_farm.db')
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-    # Format data for the React app
-    map_data = {
-        "soil": {"tomatoes": [], "onions": [], "mint": []},
-        "pumps": {"tomatoes": [], "onions": [], "mint": []}
-    }
+    # --- Initialize Extensions ---
+    # Connect the extensions to the Flask app instance
+    db.init_app(app)
+    bcrypt.init_app(app)
+    login_manager.init_app(app)
     
-    for zone in sorted(zones, key=lambda z: z.zone_index):
-        if zone.plant_type in map_data["soil"]:
-            map_data["soil"][zone.plant_type].append(zone.soil_needs_water)
-            map_data["pumps"][zone.plant_type].append(zone.pump_is_on)
-            
-    return jsonify(map_data), 200
+    # --- Configure CORS ---
+    # Allow requests from your React app's origin
+    CORS(app, supports_credentials=True, resources={r"/api/*": {"origins": "*"}}) # Loosened for fetch fix
 
-@app.route('/api/update_soil', methods=['POST'])
-@login_required
-def api_update_soil():
-    # No import needed
-    data = request.json
-    plant_type = data.get('plant_type')
-    zone_index = data.get('zone_index')
-    new_state = data.get('new_state')
-
-    zone = SlimmyZone.query.filter_by(
-        owner_id=current_user.id,
-        plant_type=plant_type,
-        zone_index=zone_index
-    ).first()
-
-    if zone:
-        zone.soil_needs_water = new_state
-        db.session.commit()
-        return jsonify({"message": "Soil updated"}), 200
-    return jsonify({"error": "Zone not found"}), 404
-
-@app.route('/api/update_pump', methods=['POST'])
-@login_required
-def api_update_pump():
-    # No import needed
-    data = request.json
-    plant_type = data.get('plant_type')
-    zone_index = data.get('zone_index')
-    new_state = data.get('new_state')
-
-    zone = SlimmyZone.query.filter_by(
-        owner_id=current_user.id,
-        plant_type=plant_type,
-        zone_index=zone_index
-    ).first()
-
-    if zone:
-        zone.pump_is_on = new_state
-        db.session.commit()
-        return jsonify({"message": "Pump updated"}), 200
-    return jsonify({"error": "Zone not found"}), 404
-
-@app.route('/api/weather', methods=['GET'])
-@login_required
-def api_weather():
-    # Return mock data as before. A real app would fetch this from a service.
-    forecast_data = [
-        { "day": 'Today', "emoji": '☀️', "high": '28°', "low": '16°' },
-        { "day": 'Tomorrow', "emoji": '⛅️', "high": '26°', "low": '15°' },
-        { "day": 'In 2 Days', "emoji": '🌧️', "high": '22°', "low": '14°' },
-        { "day": 'In 3 Days', "emoji": '🌧️', "high": '21°', "low": '13°' },
-        { "day": 'In 4 Days', "emoji": '🌩️', "high": '20°', "low": '12°' },
-        { "day": 'In 5 Days', "emoji": '⛅️', "high": '24°', "low": '14°' },
-        { "day": 'In 6 Days', "emoji": '☀️', "high": '27°', "low": '16°' },
-    ]
-    return jsonify(forecast_data), 200
-
-# --- Create DB and Run App ---
-if __name__ == '__main__':
-    # Create an 'instance' directory for the DB if it doesn't exist
-    instance_dir = os.path.join(basedir, 'instance')
-    if not os.path.exists(instance_dir):
-        os.makedirs(instance_dir)
-        
+    # --- Import Models ---
+    # This MUST be done after db.init_app(app) to avoid circular imports
+    # We import it here so that the models are registered with SQLAlchemy
     with app.app_context():
-        db.create_all() # Create database tables if they don't exist
+        # --- FIX: Removed 'SlimmyZone' from import ---
+        from models import User
         
-    app.run(debug=True)
+        # Create database tables if they don't exist
+        db.create_all()
 
+    # --- Flask-Login User Loader ---
+    @login_manager.user_loader
+    def load_user(user_id):
+        from models import User
+        return User.query.get(int(user_id))
+    
+    @login_manager.unauthorized_handler
+    def unauthorized():
+        """Handle unauthorized access."""
+        return jsonify({"error": "Unauthorized"}), 401
+
+    # --- JSON File Helper Functions for Map Data ---
+    
+    # Define the path for the map data JSON file
+    MAP_DATA_FILE = os.path.join(basedir, 'map_data.json')
+
+    def load_map_data():
+        """Loads the entire map data from map_data.json."""
+        if not os.path.exists(MAP_DATA_FILE):
+            return {}
+        try:
+            with open(MAP_DATA_FILE, 'r') as f:
+                return json.load(f)
+        except json.JSONDecodeError:
+            return {}
+
+    def save_map_data(data):
+        """Saves the entire map data to map_data.json."""
+        with open(MAP_DATA_FILE, 'w') as f:
+            json.dump(data, f, indent=4)
+            
+    def get_user_map_data(cin):
+        """Gets map data for a specific user CIN."""
+        all_data = load_map_data()
+        return all_data.get(str(cin))
+
+    def create_initial_map_data(cin):
+        """Creates and saves initial map data for a new user."""
+        all_data = load_map_data()
+        
+        # Define the structure and lengths of the zones
+        zone_config = {
+            'tomatoes': 5,
+            'onions': 6,
+            'mint': 4
+        }
+        
+        new_user_data = {
+            'soil': {},
+            'pumps': {}
+        }
+        
+        for plant, length in zone_config.items():
+            new_user_data['soil'][plant] = [random.choice([True, False]) for _ in range(length)]
+            new_user_data['pumps'][plant] = [random.choice([True, False]) for _ in range(length)]
+            
+        all_data[str(cin)] = new_user_data
+        save_map_data(all_data)
+        return new_user_data
+
+    # --- API Routes ---
+
+    @app.route('/api/signup', methods=['POST'])
+    def api_signup():
+        from models import User # Import here to avoid circular import issues
+        
+        data = request.get_json()
+        username = data.get('username')
+        cin = data.get('cin')
+        password = data.get('password')
+
+        if not all([username, cin, password]):
+            return jsonify({"error": "Missing data"}), 400
+
+        if len(cin) != 8 or not cin.isdigit():
+            return jsonify({"error": "CIN must be 8 digits"}), 400
+            
+        if len(password) < 6:
+            return jsonify({"error": "Password must be at least 6 characters"}), 400
+
+        # Check if user (CIN) already exists in SQLite
+        if User.query.filter_by(cin=cin).first():
+            return jsonify({"error": "This code (CIN) is already taken"}), 409
+
+        # Hash the password
+        hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+        
+        # Create new user in SQLite
+        new_user = User(username=username, cin=cin, password_hash=hashed_password)
+        db.session.add(new_user)
+        db.session.commit()
+        
+        # --- NEW: Create map data in JSON file ---
+        create_initial_map_data(cin)
+        
+        # Log in the new user
+        login_user(new_user)
+        
+        return jsonify({
+            "id": new_user.id,
+            "username": new_user.username,
+            "cin": new_user.cin
+        }), 201
+
+    @app.route('/api/login', methods=['POST'])
+    def api_login():
+        from models import User # Import here
+        
+        data = request.get_json()
+        cin = data.get('cin')
+        password = data.get('password')
+
+        if not cin or not password:
+            return jsonify({"error": "Missing CIN or password"}), 400
+
+        user = User.query.filter_by(cin=cin).first()
+
+        # Check if user exists and password is correct
+        if user and bcrypt.check_password_hash(user.password_hash, password):
+            login_user(user)
+            session.permanent = True  # Keep user logged in
+            return jsonify({
+                "id": user.id,
+                "username": user.username,
+                "cin": user.cin
+            }), 200
+
+        return jsonify({"error": "Invalid CIN or password"}), 401
+
+    @app.route('/api/logout', methods=['POST'])
+    @login_required
+    def api_logout():
+        logout_user()
+        return jsonify({"message": "Logout successful"}), 200
+
+    @app.route('/api/session')
+    def api_session():
+        """Checks if a user is currently logged in."""
+        if current_user.is_authenticated:
+            return jsonify({
+                "id": current_user.id,
+                "username": current_user.username,
+                "cin": current_user.cin
+            }), 200
+        else:
+            return jsonify({"error": "Not logged in"}), 401
+            
+    @app.route('/api/map_data')
+    @login_required
+    def api_map_data():
+        """Gets the map data for the currently logged-in user from the JSON file."""
+        user_cin = current_user.cin
+        map_data = get_user_map_data(user_cin)
+        
+        if not map_data:
+            # This is a fallback in case user was created but map data wasn't
+            map_data = create_initial_map_data(user_cin)
+            
+        return jsonify(map_data), 200
+
+    @app.route('/api/weather')
+    @login_required
+    def api_weather():
+        """Provides mock weather data."""
+        mock_weather = [
+            {'day': 'Today', 'emoji': '☀️', 'high': '28°', 'low': '16°'},
+            {'day': 'Tomorrow', 'emoji': '⛅️', 'high': '26°', 'low': '15°'},
+            {'day': 'In 2 Days', 'emoji': '🌧️', 'high': '22°', 'low': '14°'},
+            {'day': 'In 3 Days', 'emoji': '🌧️', 'high': '21°', 'low': '13°'},
+            {'day': 'In 4 Days', 'emoji': '🌩️', 'high': '20°', 'low': '12°'},
+            {'day': 'In 5 Days', 'emoji': '⛅️', 'high': '24°', 'low': '14°'},
+            {'day': 'In 6 Days', 'emoji': '☀️', 'high': '27°', 'low': '16°'},
+        ]
+        return jsonify(mock_weather), 200
+        
+    # --- Serve React App ---
+    @app.route('/')
+    def index():
+        """Serves the main HTML page that loads the React app."""
+        return render_template('index.html')
+
+    return app
+
+# --- Run the App ---
+if __name__ == '__main__':
+    app = create_app()
+    # Ensure the 'instance' folder exists for the database
+    instance_path = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'instance')
+    os.makedirs(instance_path, exist_ok=True)
+    
+    app.run(debug=True, host='127.0.0.1', port=5000)

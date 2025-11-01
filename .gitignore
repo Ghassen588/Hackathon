@@ -1,0 +1,12 @@
+# Python
+venv/
+*.pyc
+__pycache__/
+instance/
+*.db
+
+# Node (if you were to use npm)
+node_modules/
+
+# OS
+.DS_Store

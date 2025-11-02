@@ -1,2 +1,98 @@
 {
+    "99999999": {
+        "soil": {
+            "tomatoes": [
+                false,
+                false,
+                false,
+                true,
+                true
+            ],
+            "onions": [
+                true,
+                false,
+                false,
+                true,
+                true,
+                true
+            ],
+            "mint": [
+                false,
+                false,
+                true,
+                true
+            ]
+        },
+        "pumps": {
+            "tomatoes": [
+                true,
+                true,
+                false,
+                false,
+                false
+            ],
+            "onions": [
+                false,
+                false,
+                true,
+                true,
+                true,
+                true
+            ],
+            "mint": [
+                true,
+                false,
+                false,
+                false
+            ]
+        }
+    },
+    "55555555": {
+        "soil": {
+            "tomatoes": [
+                false,
+                true,
+                true,
+                false,
+                true
+            ],
+            "onions": [
+                false,
+                true,
+                true,
+                true,
+                true,
+                true
+            ],
+            "mint": [
+                true,
+                true,
+                false,
+                true
+            ]
+        },
+        "pumps": {
+            "tomatoes": [
+                false,
+                false,
+                true,
+                false,
+                true
+            ],
+            "onions": [
+                false,
+                true,
+                true,
+                false,
+                false,
+                true
+            ],
+            "mint": [
+                true,
+                false,
+                true,
+                true
+            ]
+        }
+    }
 }

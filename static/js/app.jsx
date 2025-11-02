@@ -277,7 +277,6 @@ function IrrigationDashboard({ mapData, onZoneClick, onPumpClick }) {
                         stroke="black"
                         strokeWidth="2"
                         opacity="0.8"
-                        onClick={() => onZoneClick('tomatoes', index, !slimmyZoneSoil.tomatoes[index])}
                         style={{ cursor: "pointer" }}
                         title={slimmyZoneSoil.tomatoes[index] ? "Soil: Needs Water (Click to change)" : "Soil: Watered (Click to change)"}
                       />
@@ -320,7 +319,6 @@ function IrrigationDashboard({ mapData, onZoneClick, onPumpClick }) {
                         stroke="black"
                         strokeWidth="2"
                         opacity="0.8"
-                        onClick={() => onZoneClick('onions', index, !slimmyZoneSoil.onions[index])}
                         style={{ cursor: "pointer" }}
                         title={slimmyZoneSoil.onions[index] ? "Soil: Needs Water (Click to change)" : "Soil: Watered (Click to change)"}
                       />
@@ -363,7 +361,6 @@ function IrrigationDashboard({ mapData, onZoneClick, onPumpClick }) {
                         stroke="black"
                         strokeWidth="2"
                         opacity="0.8"
-                        onClick={() => onZoneClick('mint', index, !slimmyZoneSoil.mint[index])}
                         style={{ cursor: "pointer" }}
                         title={slimmyZoneSoil.mint[index] ? "Soil: Needs Water (Click to change)" : "Soil: Watered (Click to change)"}
                       />
@@ -874,8 +871,6 @@ function App() {
           {currentPage === 'map' && (
             <IrrigationDashboard 
               mapData={mapData}
-              onZoneClick={handleSlimmyZoneClick}
-              onPumpClick={handleSlimmyPumpClick}
             />
           )}
           {currentPage === 'weather' && <WeatherPage />}

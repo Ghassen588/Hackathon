@@ -1,18 +1,18 @@
 {
-    "99999999": {
+    "44444444": {
         "soil": {
             "tomatoes": [
                 false,
-                false,
-                false,
+                true,
+                true,
                 true,
                 true
             ],
             "onions": [
-                true,
-                false,
                 false,
                 true,
+                true,
+                false,
                 true,
                 true
             ],
@@ -33,65 +33,65 @@
             ],
             "onions": [
                 false,
+                true,
                 false,
+                true,
+                true,
+                false
+            ],
+            "mint": [
                 true,
                 true,
                 true,
                 true
-            ],
-            "mint": [
-                true,
-                false,
-                false,
-                false
             ]
         }
     },
-    "55555555": {
+    "11111111": {
         "soil": {
             "tomatoes": [
-                false,
                 true,
                 true,
-                false,
-                true
+                true,
+                true,
+                false
             ],
             "onions": [
+                true,
                 false,
-                true,
-                true,
+                false,
                 true,
                 true,
                 true
             ],
             "mint": [
-                true,
-                true,
                 false,
-                true
+                true,
+                true,
+                false
             ]
         },
         "pumps": {
             "tomatoes": [
-                false,
-                false,
+                true,
+                true,
                 true,
                 false,
                 true
             ],
             "onions": [
                 false,
-                true,
+                false,
                 true,
                 false,
                 false,
-                true
+                false
             ],
             "mint": [
-                true,
                 false,
                 true,
-                true
+                false,
+                false
             ]
         }
     }

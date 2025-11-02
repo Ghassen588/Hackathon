@@ -277,6 +277,7 @@ function IrrigationDashboard({ mapData, onZoneClick, onPumpClick }) {
                         stroke="black"
                         strokeWidth="2"
                         opacity="0.8"
+                        onClick={() => onZoneClick('tomatoes', index, !slimmyZoneSoil.tomatoes[index])}
                         style={{ cursor: "pointer" }}
                         title={slimmyZoneSoil.tomatoes[index] ? "Soil: Needs Water (Click to change)" : "Soil: Watered (Click to change)"}
                       />
@@ -319,6 +320,7 @@ function IrrigationDashboard({ mapData, onZoneClick, onPumpClick }) {
                         stroke="black"
                         strokeWidth="2"
                         opacity="0.8"
+                        onClick={() => onZoneClick('onions', index, !slimmyZoneSoil.onions[index])}
                         style={{ cursor: "pointer" }}
                         title={slimmyZoneSoil.onions[index] ? "Soil: Needs Water (Click to change)" : "Soil: Watered (Click to change)"}
                       />
@@ -361,6 +363,7 @@ function IrrigationDashboard({ mapData, onZoneClick, onPumpClick }) {
                         stroke="black"
                         strokeWidth="2"
                         opacity="0.8"
+                        onClick={() => onZoneClick('mint', index, !slimmyZoneSoil.mint[index])}
                         style={{ cursor: "pointer" }}
                         title={slimmyZoneSoil.mint[index] ? "Soil: Needs Water (Click to change)" : "Soil: Watered (Click to change)"}
                       />
@@ -678,6 +681,52 @@ function NotificationsPage({ mapData }) {
   );
 };
 
+// --- Help Button Component ---
+function HelpButton() {
+  const [isSpeaking, setIsSpeaking] = useState(false);
+
+  const handleHelpClick = () => {
+    const helpText = "Blue color means that the area is watered. Yellow area means that the area needs to be watered. The green circle means that the pump is on. The red circle means that the pump is off.";
+    
+    if ('speechSynthesis' in window) {
+      // Stop any ongoing speech
+      window.speechSynthesis.cancel();
+      
+      const utterance = new SpeechSynthesisUtterance(helpText);
+      utterance.rate = 0.9; // Slightly slower for clarity
+      utterance.pitch = 1;
+      utterance.volume = 1;
+      
+      utterance.onstart = () => setIsSpeaking(true);
+      utterance.onend = () => setIsSpeaking(false);
+      utterance.onerror = () => setIsSpeaking(false);
+      
+      window.speechSynthesis.speak(utterance);
+    } else {
+      alert("Speech synthesis is not supported in your browser. Here are the instructions:\n\n" + helpText);
+    }
+  };
+
+  return (
+    <div className="fixed bottom-6 right-6 z-50">
+      <button
+        onClick={handleHelpClick}
+        disabled={isSpeaking}
+        className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-4 px-6 rounded-full shadow-2xl transition duration-300 transform hover:scale-110 flex items-center gap-3 text-lg"
+      >
+        <span className="text-2xl">❓</span>
+        {isSpeaking ? (
+          <span className="flex items-center gap-2">
+            <span className="animate-pulse">🔊</span>
+            Speaking...
+          </span>
+        ) : (
+          "Help"
+        )}
+      </button>
+    </div>
+  );
+}
 
 // --- Main Application Component ---
 function App() {
@@ -871,6 +920,8 @@ function App() {
           {currentPage === 'map' && (
             <IrrigationDashboard 
               mapData={mapData}
+              onZoneClick={handleSlimmyZoneClick}
+              onPumpClick={handleSlimmyPumpClick}
             />
           )}
           {currentPage === 'weather' && <WeatherPage />}
@@ -881,6 +932,9 @@ function App() {
           )}
           {currentPage === 'pricing' && <PricingPage />}
         </main>
+
+        {/* Help Button - Fixed at bottom right */}
+        <HelpButton />
       </div>
     );
   }

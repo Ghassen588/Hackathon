@@ -63,7 +63,10 @@ const mintPumpPositions = [
   { x: 600, y: 420 },
 ];
 
+import { useTranslation } from "react-i18next";
+
 function IrrigationDashboard({ mapData, onZoneClick, onPumpClick }: any) {
+  const { t } = useTranslation();
   if (!mapData) {
     return (
       <div className="p-4 md:p-8 flex items-center justify-center">
@@ -105,7 +108,7 @@ function IrrigationDashboard({ mapData, onZoneClick, onPumpClick }: any) {
       <div className="mt-6 bg-white rounded-2xl p-6 shadow-2xl border-2 border-gray-100 max-w-6xl w-full">
         <h2 className="text-lg font-semibold text-gray-800 flex items-center gap-2 mb-4">
           <span className="text-xl">🗺️</span>
-          Land Map - Field Layout
+          {t("map.landMap")}
         </h2>
 
         <div className="bg-stone-50 rounded-xl p-4 border border-gray-200">
@@ -152,8 +155,8 @@ function IrrigationDashboard({ mapData, onZoneClick, onPumpClick }: any) {
                       style={{ cursor: "pointer" }}
                       title={
                         isNeedsWater(slimmyZoneSoil?.tomatoes?.[index])
-                          ? "Soil: Needs Water (Click to change)"
-                          : "Soil: Watered (Click to change)"
+                          ? t("map.soilNeeds")
+                          : t("map.soilWatered")
                       }
                     />
                     <text
@@ -191,8 +194,8 @@ function IrrigationDashboard({ mapData, onZoneClick, onPumpClick }: any) {
                       style={{ cursor: "pointer" }}
                       title={
                         isPumpOn(slimmyZonePumps?.tomatoes?.[index])
-                          ? "Pump: ON (Click to turn OFF)"
-                          : "Pump: OFF (Click to turn ON)"
+                          ? t("map.pumpOn")
+                          : t("map.pumpOff")
                       }
                     >
                       {isPumpOn(slimmyZonePumps?.tomatoes?.[index]) && (
@@ -242,8 +245,8 @@ function IrrigationDashboard({ mapData, onZoneClick, onPumpClick }: any) {
                       style={{ cursor: "pointer" }}
                       title={
                         isNeedsWater(slimmyZoneSoil?.onions?.[index])
-                          ? "Soil: Needs Water (Click to change)"
-                          : "Soil: Watered (Click to change)"
+                          ? t("map.soilNeeds")
+                          : t("map.soilWatered")
                       }
                     />
                     <text
@@ -279,8 +282,8 @@ function IrrigationDashboard({ mapData, onZoneClick, onPumpClick }: any) {
                     style={{ cursor: "pointer" }}
                     title={
                       isPumpOn(slimmyZonePumps?.onions?.[index])
-                        ? "Pump: ON (Click to turn OFF)"
-                        : "Pump: OFF (Click to turn ON)"
+                        ? t("map.pumpOn")
+                        : t("map.pumpOff")
                     }
                   >
                     {isPumpOn(slimmyZonePumps?.onions?.[index]) && (
@@ -329,8 +332,8 @@ function IrrigationDashboard({ mapData, onZoneClick, onPumpClick }: any) {
                       style={{ cursor: "pointer" }}
                       title={
                         isNeedsWater(slimmyZoneSoil?.mint?.[index])
-                          ? "Soil: Needs Water (Click to change)"
-                          : "Soil: Watered (Click to change)"
+                          ? t("map.soilNeeds")
+                          : t("map.soilWatered")
                       }
                     />
                     <text
@@ -366,8 +369,8 @@ function IrrigationDashboard({ mapData, onZoneClick, onPumpClick }: any) {
                     style={{ cursor: "pointer" }}
                     title={
                       isPumpOn(slimmyZonePumps?.mint?.[index])
-                        ? "Pump: ON (Click to turn OFF)"
-                        : "Pump: OFF (Click to turn ON)"
+                        ? t("map.pumpOn")
+                        : t("map.pumpOff")
                     }
                   >
                     {isPumpOn(slimmyZonePumps?.mint?.[index]) && (

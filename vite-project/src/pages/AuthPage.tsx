@@ -1,5 +1,6 @@
 // src/pages/AuthPage.tsx
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 
 function AuthPage({
   onLoginSuccess,
@@ -10,6 +11,8 @@ function AuthPage({
   error?: string;
   clearError: () => void;
 }) {
+  const { t } = useTranslation();
+
   const [mode, setMode] = useState<string>("login");
   const [cin, setCin] = useState("");
   const [username, setUsername] = useState("");
@@ -51,15 +54,15 @@ function AuthPage({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!cin || !password || (mode === "signup" && !username)) {
-      setLocalError("Please fill in all fields.");
+      setLocalError(t("auth.fillFields"));
       return;
     }
     if (cin.length !== 8) {
-      setLocalError("Code (CIN) must be 8 digits.");
+      setLocalError(t("auth.cinDigits"));
       return;
     }
     if (mode === "signup" && password.length < 6) {
-      setLocalError("Password must be at least 6 characters.");
+      setLocalError(t("auth.passwordLength"));
       return;
     }
 
@@ -95,10 +98,10 @@ function AuthPage({
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-green-100 to-blue-100">
       <div className="w-full max-w-md bg-white p-8 rounded-2xl shadow-2xl">
         <h1 className="text-5xl text-center mb-6">
-          {mode === "login" ? "👋" : "🌱"}
+          {mode === "login" ? t("auth.welcomeEmoji") : t("auth.createEmoji")}
         </h1>
         <h2 className="text-3xl font-bold text-center text-gray-800 mb-8">
-          {mode === "login" ? "Welcome Back" : "Create Account"}
+          {mode === "login" ? t("auth.welcomeBack") : t("auth.createAccount")}
         </h2>
 
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -115,7 +118,7 @@ function AuthPage({
                 type="text"
                 value={username}
                 onChange={handleUserChange}
-                placeholder="Your Name"
+                placeholder={t("auth.usernamePlaceholder")}
                 required
                 className="w-full px-5 py-4 text-lg text-gray-700 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-blue-500 transition-colors"
               />
@@ -134,7 +137,7 @@ function AuthPage({
               type="password"
               value={cin}
               onChange={handleCinChange}
-              placeholder="8-Digit Code (CIN)"
+              placeholder={t("auth.cinPlaceholder")}
               required
               pattern="\d{8}"
               title="Must be 8 digits"
@@ -154,7 +157,7 @@ function AuthPage({
               type="password"
               value={password}
               onChange={handlePassChange}
-              placeholder="Password"
+              placeholder={t("auth.passwordPlaceholder")}
               required
               minLength={6}
               className="w-full px-5 py-4 text-lg text-gray-700 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-blue-500 transition-colors"
@@ -170,7 +173,11 @@ function AuthPage({
             disabled={loading}
             className="w-full text-2xl bg-blue-500 hover:bg-blue-600 text-white font-bold py-4 px-6 rounded-lg shadow-lg transition duration-300 transform hover:scale-105 disabled:opacity-50"
           >
-            {loading ? "⏳" : mode === "login" ? "Login" : "Sign Up"}
+            {loading
+              ? "⏳"
+              : mode === "login"
+              ? t("auth.login")
+              : t("auth.signup")}
           </button>
         </form>
 
@@ -181,11 +188,13 @@ function AuthPage({
           >
             {mode === "login" ? (
               <span className="text-lg">
-                Need an account? <strong>Sign Up</strong>
+                {t("auth.needAccount")}{" "}
+                <strong>{t("auth.signUpStrong")}</strong>
               </span>
             ) : (
               <span className="text-lg">
-                Already have an account? <strong>Login</strong>
+                {t("auth.alreadyAccount")}{" "}
+                <strong>{t("auth.loginStrong")}</strong>
               </span>
             )}
           </button>

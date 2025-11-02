@@ -1,7 +1,9 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 function NotificationsPage({ mapData }: { mapData: any | null }) {
   const [dismissed, setDismissed] = useState<string[]>([]);
+  const { t } = useTranslation();
 
   const slimmyZoneSoil = mapData?.soil;
 
@@ -21,15 +23,15 @@ function NotificationsPage({ mapData }: { mapData: any | null }) {
     if (slimmyZoneSoil.tomatoes.some((n: any) => isNeedsWater(n))) {
       allNotifications.push({
         id: "tomatoes",
-        plantName: "Tomatoes",
+        plantName: "",
         emoji: "🍅",
       });
     }
     if (slimmyZoneSoil.onions.some((n: any) => isNeedsWater(n))) {
-      allNotifications.push({ id: "onions", plantName: "Onions", emoji: "🧅" });
+      allNotifications.push({ id: "onions", plantName: "", emoji: "🧅" });
     }
     if (slimmyZoneSoil.mint.some((n: any) => isNeedsWater(n))) {
-      allNotifications.push({ id: "mint", plantName: "Mint", emoji: "🌿" });
+      allNotifications.push({ id: "mint", plantName: "", emoji: "🌿" });
     }
   }
 
@@ -54,24 +56,24 @@ function NotificationsPage({ mapData }: { mapData: any | null }) {
       <div className="mt-6 bg-white rounded-2xl p-6 shadow-2xl border-2 border-gray-100 max-w-6xl w-full">
         <h2 className="text-3xl font-bold text-gray-800 flex items-center gap-3 mb-6">
           <span className="text-4xl">🔔</span>
-          Notifications
+          {t("notifications.title")}
         </h2>
 
         <div className="space-y-4">
           {!slimmyZoneSoil ? (
             <div className="text-center p-10 bg-gray-50 rounded-lg">
               <p className="text-3xl font-semibold text-gray-700 mt-4">
-                Loading notifications...
+                {t("notifications.loading")}
               </p>
             </div>
           ) : activeNotifications.length === 0 ? (
             <div className="text-center p-10 bg-green-50 rounded-lg">
               <span className="text-7xl">✅</span>
               <p className="text-3xl font-semibold text-green-700 mt-4">
-                All good!
+                {t("notifications.allGood")}
               </p>
               <p className="text-xl text-gray-600">
-                No plants need watering right now.
+                {t("notifications.noPlants")}
               </p>
             </div>
           ) : (
@@ -85,10 +87,12 @@ function NotificationsPage({ mapData }: { mapData: any | null }) {
                   <span className="text-6xl">{notif.emoji}</span>
                   <div>
                     <p className="text-3xl font-bold text-yellow-800">
-                      {notif.plantName} Needs Water
+                      {t("notifications.plantAlert", {
+                        plant: notif.plantName,
+                      })}
                     </p>
                     <p className="text-lg text-yellow-700 text-left">
-                      Click to hear alert and dismiss
+                      {t("notifications.clickToHear")}
                     </p>
                   </div>
                 </div>

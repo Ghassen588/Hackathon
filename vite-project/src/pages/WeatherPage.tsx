@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 
 function WeatherPage() {
+  const { t } = useTranslation();
   const [forecastData, setForecastData] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -24,7 +26,7 @@ function WeatherPage() {
     return (
       <div className="p-4 md:p-8 flex items-center justify-center">
         <div className="mt-6 bg-white rounded-2xl p-6 shadow-2xl border-2 border-gray-100 max-w-6xl w-full text-center">
-          <span className="text-4xl">Loading Weather...</span>
+          <span className="text-4xl">{t("weather.loading")}</span>
         </div>
       </div>
     );
@@ -35,7 +37,7 @@ function WeatherPage() {
       <div className="mt-6 bg-white rounded-2xl p-6 shadow-2xl border-2 border-gray-100 max-w-6xl w-full">
         <h2 className="text-3xl font-bold text-gray-800 flex items-center gap-3 mb-6">
           <span className="text-4xl">🌦️</span>
-          7-Day Forecast
+          {t("weather.forecastTitle")}
         </h2>
 
         <div className="overflow-x-auto">

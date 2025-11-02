@@ -5,6 +5,7 @@ import NotificationsPage from "./pages/NotificationsPage";
 import HelpButton from "./components/HelpButton";
 import { useSession } from "./hooks/useSession";
 import PricingPage from "./pages/PricingPage";
+import { useTranslation } from "react-i18next";
 // @ts-nocheck
 // --- SVG Paths and Positions (unchanged) ---
 const tomatoSlimmyPaths = [
@@ -84,6 +85,8 @@ function App() {
     logout,
   } = useSession();
 
+  const { t } = useTranslation();
+
   const [currentPage, setCurrentPage] = useState("map");
 
   // centralized map data
@@ -153,7 +156,7 @@ function App() {
   if (appLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-green-100 to-blue-100">
-        <span className="text-4xl">Loading App...</span>
+        <span className="text-4xl">{t("common.loadingApp")}</span>
       </div>
     );
   }
@@ -170,7 +173,7 @@ function App() {
       <div className="min-h-screen bg-gradient-to-br from-green-100 to-blue-100">
         <header className="bg-white/80 backdrop-blur-sm p-4 shadow-md flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-0">
           <h1 className="text-xl sm:text-2xl font-bold text-gray-800">
-            🌱 Welcome, {currentUser.username}!
+            {t("common.welcome", { name: currentUser.username })}
           </h1>
           {/* keep header logout only on sm+ screens */}
           <button
@@ -178,7 +181,7 @@ function App() {
             style={{ touchAction: "manipulation" }}
             className="hidden sm:inline-flex text-base sm:text-lg font-medium bg-red-500 hover:bg-red-600 text-white py-2 px-4 sm:py-2 sm:px-5 rounded-lg shadow transition"
           >
-            Logout
+            {t("common.logout")}
           </button>
         </header>
 
@@ -192,7 +195,7 @@ function App() {
                 : "bg-white text-gray-700 hover:bg-gray-50"
             }`}
           >
-            🗺️ Map
+            {t("common.mapTitle")}
           </button>
           <button
             onClick={() => setCurrentPage("weather")}
@@ -203,7 +206,7 @@ function App() {
                 : "bg-white text-gray-700 hover:bg-gray-50"
             }`}
           >
-            🌦️ Weather
+            {t("common.weatherTitle")}
           </button>
           <button
             onClick={() => setCurrentPage("notifications")}
@@ -214,7 +217,7 @@ function App() {
                 : "bg-white text-gray-700 hover:bg-gray-50"
             }`}
           >
-            🔔 Notifications
+            {t("common.notificationsTitle")}
             {hasNotifications && currentPage !== "notifications" && (
               <span className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white text-xs font-bold rounded-full flex items-center justify-center border-2 border-white animate-pulse">
                 !
@@ -230,7 +233,7 @@ function App() {
                 : "bg-white text-gray-700 hover:bg-gray-50"
             }`}
           >
-            💰 Pricing
+            {t("common.pricingTitle")}
           </button>
         </nav>
 
@@ -270,20 +273,14 @@ function App() {
                           stroke="black"
                           strokeWidth="2"
                           opacity="0.8"
-                          onClick={() =>
-                            handleZoneClick(
-                              "tomatoes",
-                              index,
-                              !soil.tomatoes[index]
-                            )
-                          }
                           style={{ cursor: "pointer" }}
-                          title={
-                            soil.tomatoes[index]
-                              ? "Soil: Needs Water (Click to change)"
-                              : "Soil: Watered (Click to change)"
-                          }
-                        />
+                        >
+                          <title>
+                            {soil.tomatoes[index]
+                              ? t("map.soilNeeds")
+                              : t("map.soilWatered")}
+                          </title>
+                        </path>
                         <text
                           x={tomatoEmojiPositions[index].x}
                           y={tomatoEmojiPositions[index].y}
@@ -305,21 +302,13 @@ function App() {
                         fill={getPumpStatusColor(pumps.tomatoes[index])}
                         stroke="white"
                         strokeWidth="2"
-                        onClick={(e) =>
-                          handlePumpClick(
-                            e,
-                            "tomatoes",
-                            index,
-                            !pumps.tomatoes[index]
-                          )
-                        }
                         style={{ cursor: "pointer" }}
-                        title={
-                          pumps.tomatoes[index]
-                            ? "Pump: ON (Click to turn OFF)"
-                            : "Pump: OFF (Click to turn ON)"
-                        }
                       >
+                        <title>
+                          {pumps.tomatoes[index]
+                            ? t("map.pumpOn")
+                            : t("map.pumpOff")}
+                        </title>
                         {pumps.tomatoes[index] && (
                           <animate
                             attributeName="r"
@@ -351,20 +340,14 @@ function App() {
                           stroke="black"
                           strokeWidth="2"
                           opacity="0.8"
-                          onClick={() =>
-                            handleZoneClick(
-                              "onions",
-                              index,
-                              !soil.onions[index]
-                            )
-                          }
                           style={{ cursor: "pointer" }}
-                          title={
-                            soil.onions[index]
-                              ? "Soil: Needs Water (Click to change)"
-                              : "Soil: Watered (Click to change)"
-                          }
-                        />
+                        >
+                          <title>
+                            {soil.onions[index]
+                              ? t("map.soilNeeds")
+                              : t("map.soilWatered")}
+                          </title>
+                        </path>
                         <text
                           x={onionEmojiPositions[index].x}
                           y={onionEmojiPositions[index].y}
@@ -386,21 +369,13 @@ function App() {
                         fill={getPumpStatusColor(pumps.onions[index])}
                         stroke="white"
                         strokeWidth="2"
-                        onClick={(e) =>
-                          handlePumpClick(
-                            e,
-                            "onions",
-                            index,
-                            !pumps.onions[index]
-                          )
-                        }
                         style={{ cursor: "pointer" }}
-                        title={
-                          pumps.onions[index]
-                            ? "Pump: ON (Click to turn OFF)"
-                            : "Pump: OFF (Click to turn ON)"
-                        }
                       >
+                        <title>
+                          {pumps.onions[index]
+                            ? t("map.pumpOn")
+                            : t("map.pumpOff")}
+                        </title>
                         {pumps.onions[index] && (
                           <animate
                             attributeName="r"
@@ -432,16 +407,14 @@ function App() {
                           stroke="black"
                           strokeWidth="2"
                           opacity="0.8"
-                          onClick={() =>
-                            handleZoneClick("mint", index, !soil.mint[index])
-                          }
                           style={{ cursor: "pointer" }}
-                          title={
-                            soil.mint[index]
-                              ? "Soil: Needs Water (Click to change)"
-                              : "Soil: Watered (Click to change)"
-                          }
-                        />
+                        >
+                          <title>
+                            {soil.mint[index]
+                              ? t("map.soilNeeds")
+                              : t("map.soilWatered")}
+                          </title>
+                        </path>
                         <text
                           x={mintEmojiPositions[index].x}
                           y={mintEmojiPositions[index].y}
@@ -463,16 +436,13 @@ function App() {
                         fill={getPumpStatusColor(pumps.mint[index])}
                         stroke="white"
                         strokeWidth="2"
-                        onClick={(e) =>
-                          handlePumpClick(e, "mint", index, !pumps.mint[index])
-                        }
                         style={{ cursor: "pointer" }}
-                        title={
-                          pumps.mint[index]
-                            ? "Pump: ON (Click to turn OFF)"
-                            : "Pump: OFF (Click to turn ON)"
-                        }
                       >
+                        <title>
+                          {pumps.mint[index]
+                            ? t("map.pumpOn")
+                            : t("map.pumpOff")}
+                        </title>
                         {pumps.mint[index] && (
                           <animate
                             attributeName="r"

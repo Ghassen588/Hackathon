@@ -1,43 +1,33 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 const PricingPage = () => {
+  const { t } = useTranslation();
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
 
   const plans = [
     {
       id: "free",
-      name: "Free Plan",
-      price: "$0",
-      period: "forever",
+      name: t("pricing.freePlan"),
+      price: t("pricing.free.price"),
+      period: t("pricing.free.period"),
       icon: "🎯",
-      features: [
-        "Small area coverage (up to 1 acre)",
-        "Basic soil monitoring",
-        "Weather forecasts",
-        "3 irrigation zones",
-        "Community support",
-      ],
-      buttonText: "Current Plan",
+      features: t("pricing.free.features", { returnObjects: true }) as string[],
+      buttonText: t("pricing.currentPlan"),
       buttonVariant: "bg-gray-500 hover:bg-gray-600",
       popular: false,
     },
     {
       id: "premium",
-      name: "Premium Plan",
-      price: "$10",
-      period: "per month",
+      name: t("pricing.premiumPlan"),
+      price: t("pricing.premium.price"),
+      period: t("pricing.premium.period"),
       icon: "🚀",
-      features: [
-        "Wide area coverage (up to 10 acres)",
-        "Advanced soil analytics",
-        "Detailed weather insights",
-        "Unlimited irrigation zones",
-        "Priority support",
-        "Mobile app access",
-        "Historical data analysis",
-      ],
-      buttonText: "Upgrade Now",
+      features: t("pricing.premium.features", {
+        returnObjects: true,
+      }) as string[],
+      buttonText: t("pricing.upgradeNow"),
       buttonVariant: "bg-green-500 hover:bg-green-600",
       popular: true,
     },
@@ -66,10 +56,10 @@ const PricingPage = () => {
       <div className="mt-6 bg-white rounded-2xl p-8 shadow-2xl border-2 border-gray-100 max-w-6xl w-full">
         <h2 className="text-3xl font-bold text-gray-800 flex items-center gap-3 mb-2">
           <span className="text-4xl">💰</span>
-          Choose Your Plan
+          {t("pricing.choosePlan")}
         </h2>
         <p className="text-gray-600 text-lg mb-8 text-center">
-          Select the plan that works best for your farming needs
+          {t("pricing.selectPlan")}
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -83,7 +73,7 @@ const PricingPage = () => {
               {plan.popular && (
                 <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
                   <span className="bg-green-500 text-white px-4 py-1 rounded-full text-sm font-bold">
-                    MOST POPULAR
+                    {t("pricing.mostPopular")}
                   </span>
                 </div>
               )}
@@ -126,10 +116,14 @@ const PricingPage = () => {
                 {isProcessing && selectedPlan === plan.id ? (
                   <span className="flex items-center justify-center gap-2">
                     <span className="animate-spin">⏳</span>
-                    Processing...
+                    {t("pricing.processing")}
                   </span>
                 ) : (
-                  plan.buttonText
+                  t(
+                    `pricing.${
+                      plan.id === "free" ? "currentPlan" : "upgradeNow"
+                    }`
+                  ) || plan.buttonText
                 )}
               </button>
             </div>
@@ -137,8 +131,8 @@ const PricingPage = () => {
         </div>
 
         <div className="mt-8 text-center text-gray-600">
-          <p>💡 All plans include our core irrigation management features</p>
-          <p className="text-sm mt-2">Cancel or change your plan anytime</p>
+          <p>💡 {t("pricing.allInclude")}</p>
+          <p className="text-sm mt-2">{t("pricing.cancelAnytime")}</p>
         </div>
       </div>
     </div>

@@ -1,11 +1,12 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 function HelpButton() {
   const [isSpeaking, setIsSpeaking] = useState(false);
+  const { t } = useTranslation();
 
   const handleHelpClick = () => {
-    const helpText =
-      "Blue color means that the area is watered. Yellow area means that the area needs to be watered. The green circle means that the pump is on. The red circle means that the pump is off.";
+    const helpText = t("helpText.explanation");
 
     if ("speechSynthesis" in window) {
       window.speechSynthesis.cancel();
@@ -21,10 +22,7 @@ function HelpButton() {
 
       window.speechSynthesis.speak(utterance);
     } else {
-      alert(
-        "Speech synthesis is not supported in your browser. Here are the instructions:\n\n" +
-          helpText
-      );
+      alert(t("helpText.help") + ":\n\n" + helpText);
     }
   };
 
@@ -39,10 +37,10 @@ function HelpButton() {
         {isSpeaking ? (
           <span className="flex items-center gap-2">
             <span className="animate-pulse">🔊</span>
-            Speaking...
+            {t("helpText.speaking")}
           </span>
         ) : (
-          "Help"
+          t("helpText.help")
         )}
       </button>
     </div>

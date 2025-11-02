@@ -1,9 +1,12 @@
+import { useTranslation } from "react-i18next";
+
 type PumpCircleProps = {
   status: boolean;
   onClick?: (e?: any) => void;
 };
 
 const PumpCircle = ({ status, onClick }: PumpCircleProps) => {
+  const { t } = useTranslation();
   const getPumpStatusColor = (s: boolean) => (s ? "#22c55e" : "#ef4444");
 
   return (
@@ -13,9 +16,7 @@ const PumpCircle = ({ status, onClick }: PumpCircleProps) => {
       viewBox="0 0 24 24"
       style={{ overflow: "visible" }}
     >
-      <title>
-        {status ? "Pump: ON (Click to toggle)" : "Pump: OFF (Click to toggle)"}
-      </title>
+      <title>{status ? t("map.pumpOn") : t("map.pumpOff")}</title>
       <circle
         cx={12}
         cy={12}

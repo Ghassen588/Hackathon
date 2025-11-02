@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import AuthPage from "./pages/AuthPage";
-import MapPage from "./pages/MapPage";
 import WeatherPage from "./pages/WeatherPage";
 import NotificationsPage from "./pages/NotificationsPage";
 import HelpButton from "./components/HelpButton";
@@ -139,79 +138,7 @@ function App() {
   };
 
   const getPumpStatusColor = (status: boolean) =>
-    status ? "#10B981" : "#9CA3AF";
-
-  const handleZoneClick = async (
-    plantType: string,
-    idx: number,
-    newVal: boolean
-  ) => {
-    // optimistic update
-    setMapData((prev: any) => {
-      if (!prev) return prev;
-      return {
-        ...prev,
-        soil: {
-          ...prev.soil,
-          [plantType]: prev.soil[plantType].map((s: any, i: number) =>
-            i === idx ? newVal : s
-          ),
-        },
-      };
-    });
-
-    try {
-      await fetch("/api/update_soil", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          plant_type: plantType,
-          zone_index: idx,
-          new_state: newVal,
-        }),
-      });
-    } catch (e) {
-      console.error("Failed to update soil", e);
-      // TODO: revert optimistic update if necessary
-    }
-  };
-
-  const handlePumpClick = async (
-    e: any,
-    plantType: string,
-    idx: number,
-    newVal: boolean
-  ) => {
-    e?.stopPropagation?.();
-    // optimistic update
-    setMapData((prev: any) => {
-      if (!prev) return prev;
-      return {
-        ...prev,
-        pumps: {
-          ...prev.pumps,
-          [plantType]: prev.pumps[plantType].map((p: any, i: number) =>
-            i === idx ? newVal : p
-          ),
-        },
-      };
-    });
-
-    try {
-      await fetch("/api/update_pump", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          plant_type: plantType,
-          zone_index: idx,
-          new_state: newVal,
-        }),
-      });
-    } catch (e) {
-      console.error("Failed to update pump", e);
-      // TODO: revert optimistic update if necessary
-    }
-  };
+    status ? "#10B981" : "#cf3232ff";
 
   const handleLogout = async () => {
     try {

@@ -1,0 +1,98 @@
+{
+  "version": 1,
+  "author": "Grok",
+  "editor": "wokwi",
+  "parts": [
+    {
+      "type": "board-pi-pico-w",
+      "id": "pico",
+      "top": 0,
+      "left": 0,
+      "attrs": { "env": "micropython-20230426-v1.20.0" }
+    },
+    {
+      "type": "wokwi-potentiometer",
+      "id": "moist",
+      "top": -120,
+      "left": -180,
+      "attrs": { "label": "Soil Moisture" }
+    },
+    {
+      "type": "wokwi-ntc-temperature-sensor",
+      "id": "ntc1",
+      "top": -122.2,
+      "left": -144.6,
+      "attrs": { "label": "Soil Temp" }
+    },
+    {
+      "type": "wokwi-pushbutton",
+      "id": "crop_btn",
+      "top": 121.4,
+      "left": 297.6,
+      "attrs": { "color": "green", "label": "Change Crop" }
+    },
+    { "type": "wokwi-relay-module", "id": "relay1", "top": 153.8, "left": 172.8, "attrs": {} },
+    {
+      "type": "wokwi-led",
+      "id": "led1",
+      "top": 89.73,
+      "left": 384.89,
+      "attrs": { "color": "red", "label": "PUMP ON" }
+    },
+    { "type": "wokwi-vcc", "id": "vcc1", "top": 57.18, "left": 333.72, "attrs": {} },
+    { "type": "wokwi-gnd", "id": "gnd1", "top": 189.22, "left": 430.58, "attrs": {} },
+    { "type": "wokwi-slide-switch", "id": "sw1", "top": 33.2, "left": 233.5, "attrs": {} },
+    { "type": "wokwi-slide-switch", "id": "sw2", "top": 52.4, "left": -102.5, "attrs": {} },
+    { "type": "wokwi-slide-switch", "id": "sw3", "top": 148.4, "left": -92.9, "attrs": {} },
+    {
+      "type": "wokwi-potentiometer",
+      "id": "npk_sensor",
+      "top": -200,
+      "left": 200,
+      "attrs": { "label": "Virtual NPK Sensor" }
+    },
+    {
+      "type": "wokwi-potentiometer",
+      "id": "ph_sensor",
+      "top": -200,
+      "left": 400,
+      "attrs": { "label": "Virtual pH Sensor" }
+    },
+    {
+      "type": "wokwi-dht22",
+      "id": "humidity_sensor",
+      "top": -50,
+      "left": 300,
+      "attrs": { "label": "Soil Humidity" }
+    }
+  ],
+  "connections": [
+    [ "pico:GP27", "moist:IN", "green", [ "h-100", "v-100" ] ],
+    [ "moist:GND", "pico:GND.8", "black", [] ],
+    [ "moist:VCC", "pico:3V3", "red", [] ],
+    [ "pico:GND.8", "ntc1:GND", "black", [ "h95.22", "v-131.96" ] ],
+    [ "pico:3V3", "ntc1:VCC", "red", [ "h79.89", "v-139.82" ] ],
+    [ "pico:GP26", "ntc1:OUT", "green", [ "h59.22", "v-179.82" ] ],
+    [ "pico:GP14", "crop_btn:1", "green", [ "h100", "v50" ] ],
+    [ "crop_btn:2", "pico:GND.8", "black", [] ],
+    [ "relay1:VCC", "pico:3V3", "red", [ "h-27.76", "v-106.7" ] ],
+    [ "relay1:GND", "pico:GND.8", "black", [ "h-58.34", "v-147.28" ] ],
+    [ "relay1:IN", "pico:GP16", "green", [ "h0" ] ],
+    [ "relay1:COM", "vcc1:VCC", "red", [ "h0" ] ],
+    [ "relay1:NO", "led1:A", "green", [ "h0" ] ],
+    [ "led1:C", "gnd1:GND", "black", [ "v0" ] ],
+    [ "sw2:2", "pico:GP7", "green", [ "v9.6", "h86.5" ] ],
+    [ "sw3:2", "pico:GP8", "green", [ "v0" ] ],
+    [ "sw1:2", "pico:GP6", "green", [ "v0" ] ],
+    [ "pico:GP28", "npk_sensor:IN", "blue", [ "h-50", "v-50" ] ],
+    [ "npk_sensor:GND", "pico:GND.8", "black", [] ],
+    [ "npk_sensor:VCC", "pico:3V3", "red", [] ],
+    [ "pico:GP22", "ph_sensor:IN", "orange", [ "h-50", "v-50" ] ],
+    [ "ph_sensor:GND", "pico:GND.8", "black", [] ],
+    [ "ph_sensor:VCC", "pico:3V3", "red", [] ],
+    [ "pico:GP21", "humidity_sensor:VCC", "red", [] ],
+    [ "pico:GP20", "humidity_sensor:SDA", "yellow", [] ],
+    [ "humidity_sensor:GND", "pico:GND.8", "black", [] ]
+  ],
+  "dependencies": {}
+}

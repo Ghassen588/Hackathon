@@ -142,5 +142,53 @@
                 true
             ]
         }
+    },
+    "12345678": {
+        "soil": {
+            "tomatoes": [
+                false,
+                false,
+                true,
+                false,
+                false
+            ],
+            "onions": [
+                true,
+                false,
+                false,
+                true,
+                true,
+                true
+            ],
+            "mint": [
+                true,
+                false,
+                true,
+                false
+            ]
+        },
+        "pumps": {
+            "tomatoes": [
+                false,
+                true,
+                false,
+                false,
+                false
+            ],
+            "onions": [
+                false,
+                true,
+                false,
+                true,
+                false,
+                true
+            ],
+            "mint": [
+                true,
+                false,
+                false,
+                true
+            ]
+        }
     }
 }

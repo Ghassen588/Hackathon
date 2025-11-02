@@ -241,22 +241,25 @@ function App() {
   if (currentUser) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-green-100 to-blue-100">
-        <header className="bg-white/80 backdrop-blur-sm p-4 shadow-md flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-gray-800">
+        <header className="bg-white/80 backdrop-blur-sm p-4 shadow-md flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-0">
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-800">
             🌱 Welcome, {currentUser.username}!
           </h1>
+          {/* keep header logout only on sm+ screens */}
           <button
             onClick={handleLogout}
-            className="text-lg font-medium bg-red-500 hover:bg-red-600 text-white py-2 px-5 rounded-lg shadow transition"
+            style={{ touchAction: "manipulation" }}
+            className="hidden sm:inline-flex text-base sm:text-lg font-medium bg-red-500 hover:bg-red-600 text-white py-2 px-4 sm:py-2 sm:px-5 rounded-lg shadow transition"
           >
             Logout
           </button>
         </header>
 
-        <nav className="flex justify-center items-center gap-4 p-4">
+        <nav className="flex flex-wrap justify-center items-center gap-2 sm:gap-4 p-4">
           <button
             onClick={() => setCurrentPage("map")}
-            className={`text-2xl font-medium py-3 px-6 rounded-lg shadow transition transform hover:scale-105 ${
+            style={{ touchAction: "manipulation" }}
+            className={`text-lg sm:text-2xl font-medium py-2 sm:py-3 px-4 sm:px-6 rounded-lg shadow transition transform hover:scale-105 ${
               currentPage === "map"
                 ? "bg-blue-500 text-white"
                 : "bg-white text-gray-700 hover:bg-gray-50"
@@ -266,7 +269,8 @@ function App() {
           </button>
           <button
             onClick={() => setCurrentPage("weather")}
-            className={`text-2xl font-medium py-3 px-6 rounded-lg shadow transition transform hover:scale-105 ${
+            style={{ touchAction: "manipulation" }}
+            className={`text-lg sm:text-2xl font-medium py-2 sm:py-3 px-4 sm:px-6 rounded-lg shadow transition transform hover:scale-105 ${
               currentPage === "weather"
                 ? "bg-blue-500 text-white"
                 : "bg-white text-gray-700 hover:bg-gray-50"
@@ -276,7 +280,8 @@ function App() {
           </button>
           <button
             onClick={() => setCurrentPage("notifications")}
-            className={`text-2xl font-medium py-3 px-6 rounded-lg shadow transition transform hover:scale-105 relative ${
+            style={{ touchAction: "manipulation" }}
+            className={`text-lg sm:text-2xl font-medium py-2 sm:py-3 px-4 sm:px-6 rounded-lg shadow transition transform hover:scale-105 relative ${
               currentPage === "notifications"
                 ? "bg-blue-500 text-white"
                 : "bg-white text-gray-700 hover:bg-gray-50"
@@ -291,7 +296,8 @@ function App() {
           </button>
           <button
             onClick={() => setCurrentPage("pricing")}
-            className={`text-2xl font-medium py-3 px-6 rounded-lg shadow transition transform hover:scale-105 ${
+            style={{ touchAction: "manipulation" }}
+            className={`text-lg sm:text-2xl font-medium py-2 sm:py-3 px-4 sm:px-6 rounded-lg shadow transition transform hover:scale-105 ${
               currentPage === "pricing"
                 ? "bg-blue-500 text-white"
                 : "bg-white text-gray-700 hover:bg-gray-50"
@@ -301,12 +307,14 @@ function App() {
           </button>
         </nav>
 
-        <main>
+        <main className="px-3 sm:px-6 pb-8">
           {currentPage === "map" && (
-            <div className="bg-stone-50 rounded-xl p-4 border border-gray-200 max-w-[900px] mx-auto">
+            <div className="bg-stone-50 rounded-xl p-3 sm:p-4 border border-gray-200 max-w-[900px] mx-auto w-full">
               <svg
                 viewBox="0 0 800 600"
-                className="w-full h-auto transform scale-95"
+                // slightly smaller on mobile, keep readable on larger screens
+                className="w-full h-auto transform scale-90 sm:scale-95"
+                style={{ touchAction: "manipulation" }}
               >
                 <rect width="800" height="600" fill="#f7f3e8" />
                 <path
@@ -553,12 +561,45 @@ function App() {
               </svg>
             </div>
           )}
-          {currentPage === "weather" && <WeatherPage />}
-          {currentPage === "notifications" && (
-            <NotificationsPage mapData={mapData} />
+          {currentPage === "weather" && (
+            <div
+              className="max-w-[900px] mx-auto w-full px-3 sm:px-6 py-3 sm:py-6 text-sm sm:text-base"
+              style={{
+                // keep weather content scrollable vertically on mobile
+                maxHeight: "calc(100vh - 160px)",
+                overflowY: "auto",
+                WebkitOverflowScrolling: "touch",
+              }}
+            >
+              <div className="sm:scale-100 scale-95">
+                <WeatherPage />
+              </div>
+            </div>
           )}
-          {currentPage === "pricing" && <PricingPage />}
+          {currentPage === "notifications" && (
+            <div className="max-w-[900px] mx-auto w-full px-3 sm:px-6 py-3 sm:py-6 text-sm sm:text-base">
+              <div className="sm:scale-100 scale-95">
+                <NotificationsPage mapData={mapData} />
+              </div>
+            </div>
+          )}
+          {currentPage === "pricing" && (
+            <div className="max-w-[900px] mx-auto w-full px-3 sm:px-6 py-3 sm:py-6 text-sm sm:text-base">
+              <div className="sm:scale-100 scale-95">
+                <PricingPage />
+              </div>
+            </div>
+          )}
         </main>
+
+        {/* mobile fixed logout button (only visible on small screens) */}
+        <button
+          onClick={handleLogout}
+          style={{ touchAction: "manipulation" }}
+          className="sm:hidden fixed bottom-4 left-1/2 transform -translate-x-1/2 z-40 text-base font-medium bg-red-500 hover:bg-red-600 text-white py-3 px-6 rounded-full shadow-lg"
+        >
+          Logout
+        </button>
 
         <HelpButton />
       </div>

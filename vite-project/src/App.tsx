@@ -303,8 +303,11 @@ function App() {
 
         <main>
           {currentPage === "map" && (
-            <div className="bg-stone-50 rounded-xl p-4 border border-gray-200">
-              <svg viewBox="0 0 800 600" className="w-full h-auto">
+            <div className="bg-stone-50 rounded-xl p-4 border border-gray-200 max-w-[900px] mx-auto">
+              <svg
+                viewBox="0 0 800 600"
+                className="w-full h-auto transform scale-95"
+              >
                 <rect width="800" height="600" fill="#f7f3e8" />
                 <path
                   d="M 50 50 L 750 50 L 750 550 L 50 550 Z"

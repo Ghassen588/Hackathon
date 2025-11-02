@@ -36,7 +36,13 @@
     "noPlants": "لا تحتاج النباتات للماء الآن.",
     "needsWater": "تحتاج للماء",
     "plantAlert": "{{plant}} تحتاج للماء",
-    "clickToHear": "انقر لسماع التنبيه وإخفائه"
+    "clickToHear": "انقر لسماع التنبيه وإخفائه",
+    "speech": "اسقِ {{plant}}"
+  },
+  "plants": {
+    "tomatoes": "الطماطم",
+    "onions": "البصل",
+    "mint": "النعناع"
   },
   "pricing": {
     "choosePlan": "اختر خطتك",

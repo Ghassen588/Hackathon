@@ -2,8 +2,8 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 function NotificationsPage({ mapData }: { mapData: any | null }) {
-  const [dismissed, setDismissed] = useState<string[]>([]);
   const { t } = useTranslation();
+  const [dismissed, setDismissed] = useState<string[]>([]);
 
   const slimmyZoneSoil = mapData?.soil;
 
@@ -21,17 +21,13 @@ function NotificationsPage({ mapData }: { mapData: any | null }) {
 
   if (slimmyZoneSoil) {
     if (slimmyZoneSoil.tomatoes.some((n: any) => isNeedsWater(n))) {
-      allNotifications.push({
-        id: "tomatoes",
-        plantName: "",
-        emoji: "🍅",
-      });
+      allNotifications.push({ id: "tomatoes", emoji: "🍅" });
     }
     if (slimmyZoneSoil.onions.some((n: any) => isNeedsWater(n))) {
-      allNotifications.push({ id: "onions", plantName: "", emoji: "🧅" });
+      allNotifications.push({ id: "onions", emoji: "🧅" });
     }
     if (slimmyZoneSoil.mint.some((n: any) => isNeedsWater(n))) {
-      allNotifications.push({ id: "mint", plantName: "", emoji: "🌿" });
+      allNotifications.push({ id: "mint", emoji: "🌿" });
     }
   }
 
@@ -41,8 +37,9 @@ function NotificationsPage({ mapData }: { mapData: any | null }) {
 
   const handleNotificationClick = (notification: any) => {
     try {
+      const plant = t(`plants.${notification.id}`);
       const utterance = new SpeechSynthesisUtterance(
-        `Water the ${notification.plantName}`
+        t("notifications.speech", { plant })
       );
       window.speechSynthesis.speak(utterance);
     } catch (e) {
@@ -88,7 +85,7 @@ function NotificationsPage({ mapData }: { mapData: any | null }) {
                   <div>
                     <p className="text-3xl font-bold text-yellow-800">
                       {t("notifications.plantAlert", {
-                        plant: notif.plantName,
+                        plant: t(`plants.${notif.id}`),
                       })}
                     </p>
                     <p className="text-lg text-yellow-700 text-left">

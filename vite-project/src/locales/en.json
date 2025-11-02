@@ -30,13 +30,19 @@
     "loginStrong": "تسجيل الدخول"
   },
   "notifications": {
-    "title": "الإشعارات",
-    "loading": "جارٍ تحميل الإشعارات...",
-    "allGood": "كل شيء على ما يرام!",
-    "noPlants": "لا توجد نباتات تحتاج إلى سقي الآن.",
-    "needsWater": "تحتاج إلى الماء",
-    "plantAlert": "{{plant}} تحتاج إلى الماء",
-    "clickToHear": "انقر للاستماع إلى التنبيه وإزالته"
+    "title": "Notifications",
+    "loading": "Loading notifications...",
+    "allGood": "All good!",
+    "noPlants": "No plants need watering right now.",
+    "needsWater": "Needs Water",
+    "plantAlert": "{{plant}} Needs Water",
+    "clickToHear": "Click to hear alert and dismiss",
+    "speech": "Water the {{plant}}"
+  },
+  "plants": {
+    "tomatoes": "Tomatoes",
+    "onions": "Onions",
+    "mint": "Mint"
   },
   "pricing": {
     "choosePlan": "اختر خطتك",

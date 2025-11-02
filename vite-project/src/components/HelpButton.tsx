@@ -11,16 +11,14 @@ function HelpButton() {
     if ("speechSynthesis" in window) {
       window.speechSynthesis.cancel();
 
-      const utterance = new SpeechSynthesisUtterance(helpText);
-      utterance.rate = 0.9;
-      utterance.pitch = 1;
-      utterance.volume = 1;
-
-      utterance.onstart = () => setIsSpeaking(true);
-      utterance.onend = () => setIsSpeaking(false);
-      utterance.onerror = () => setIsSpeaking(false);
-
-      window.speechSynthesis.speak(utterance);
+      const audio = new Audio("/help.mp3");
+      audio.playbackRate = 0.9;
+      audio.volume = 1;
+      audio.onplay = () => setIsSpeaking(true);
+      audio.onended = () => setIsSpeaking(false);
+      audio.onerror = () => setIsSpeaking(false);
+      audio.play().catch(() => setIsSpeaking(false));
+      return;
     } else {
       alert(t("helpText.help") + ":\n\n" + helpText);
     }

@@ -35,16 +35,45 @@ function NotificationsPage({ mapData }: { mapData: any | null }) {
     (notif) => !dismissed.includes(notif.id)
   );
 
-  const handleNotificationClick = (notification: any) => {
-    try {
-      const plant = t(`plants.${notification.id}`);
-      const utterance = new SpeechSynthesisUtterance(
-        t("notifications.speech", { plant })
-      );
-      window.speechSynthesis.speak(utterance);
-    } catch (e) {
-      console.error("Speech synthesis failed:", e);
+  const audioMap: Record<string, string> = {
+    tomatoes: "/tomatoes.mp3",
+    onions: "/onions.mp3",
+    mint: "/mints.mp3",
+  };
+
+  const handleNotificationClick = async (notification: any) => {
+    const audioSrc = audioMap[notification.id];
+    // try playing audio from public/ first (user-provided files)
+    if (audioSrc) {
+      try {
+        const audio = new Audio(audioSrc);
+        await audio.play();
+      } catch (err) {
+        console.warn("Audio playback failed, falling back to TTS:", err);
+        // fallback to speech synthesis
+        try {
+          const plant = t(`plants.${notification.id}`);
+          const utterance = new SpeechSynthesisUtterance(
+            t("notifications.speech", { plant })
+          );
+          window.speechSynthesis.speak(utterance);
+        } catch (e) {
+          console.error("Speech synthesis failed:", e);
+        }
+      }
+    } else {
+      // if no audio file mapped, fallback to TTS
+      try {
+        const plant = t(`plants.${notification.id}`);
+        const utterance = new SpeechSynthesisUtterance(
+          t("notifications.speech", { plant })
+        );
+        window.speechSynthesis.speak(utterance);
+      } catch (e) {
+        console.error("Speech synthesis failed:", e);
+      }
     }
+
     setDismissed((prevDismissed) => [...prevDismissed, notification.id]);
   };
 

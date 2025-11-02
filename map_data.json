@@ -94,5 +94,53 @@
                 false
             ]
         }
+    },
+    "64968198": {
+        "soil": {
+            "tomatoes": [
+                true,
+                true,
+                false,
+                true,
+                true
+            ],
+            "onions": [
+                false,
+                false,
+                true,
+                true,
+                true,
+                true
+            ],
+            "mint": [
+                false,
+                false,
+                false,
+                false
+            ]
+        },
+        "pumps": {
+            "tomatoes": [
+                true,
+                false,
+                true,
+                true,
+                false
+            ],
+            "onions": [
+                false,
+                false,
+                false,
+                true,
+                true,
+                true
+            ],
+            "mint": [
+                true,
+                true,
+                true,
+                true
+            ]
+        }
     }
 }

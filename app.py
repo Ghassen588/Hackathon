@@ -207,14 +207,15 @@ def create_app():
     def api_weather():
         """Provides mock weather data."""
         mock_weather = [
-            {'day': 'Today', 'emoji': '☀️', 'high': '28°', 'low': '16°'},
-            {'day': 'Tomorrow', 'emoji': '⛅️', 'high': '26°', 'low': '15°'},
-            {'day': 'In 2 Days', 'emoji': '🌧️', 'high': '22°', 'low': '14°'},
-            {'day': 'In 3 Days', 'emoji': '🌧️', 'high': '21°', 'low': '13°'},
-            {'day': 'In 4 Days', 'emoji': '🌩️', 'high': '20°', 'low': '12°'},
-            {'day': 'In 5 Days', 'emoji': '⛅️', 'high': '24°', 'low': '14°'},
-            {'day': 'In 6 Days', 'emoji': '☀️', 'high': '27°', 'low': '16°'},
-        ]
+        {'day': 'اليوم', 'emoji': '☀️', 'high': '28°', 'low': '16°'},
+        {'day': 'غدًا', 'emoji': '⛅️', 'high': '26°', 'low': '15°'},
+        {'day': 'بعد يومين', 'emoji': '🌧️', 'high': '22°', 'low': '14°'},
+        {'day': 'بعد 3 أيام', 'emoji': '🌧️', 'high': '21°', 'low': '13°'},
+        {'day': 'بعد 4 أيام', 'emoji': '🌩️', 'high': '20°', 'low': '12°'},
+        {'day': 'بعد 5 أيام', 'emoji': '⛅️', 'high': '24°', 'low': '14°'},
+        {'day': 'بعد 6 أيام', 'emoji': '☀️', 'high': '27°', 'low': '16°'},
+    ]
+
         return jsonify(mock_weather), 200
         
     # --- Serve React App ---
